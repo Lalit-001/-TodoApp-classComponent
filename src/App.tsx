@@ -176,7 +176,11 @@ class App extends Component<AppProps, AppState> {
                     onChange={this.handleIncompleteTask}
                   />
                   <h1>{item[0]}</h1>
-                  <button>
+                  <button
+                    onClick={() => {
+                      this.handleDelete(item);
+                    }}
+                  >
                     {" "}
                     <ImCross />
                   </button>
