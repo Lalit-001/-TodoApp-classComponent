@@ -1,3 +1,6 @@
+//abhi is code m ek jgh useEeffect lgana h lakin muje aata nhi abhi vo sooo alg alg delete function bnane
+//pde and function props m pass krne nhi aate so.. sb component ek hi page m h.....
+
 import { ChangeEvent, Component, ReactNode } from "react";
 // import AddTodo from "./AddTodo";
 import { ImCross } from "react-icons/im";
@@ -106,7 +109,7 @@ class App extends Component<AppProps, AppState> {
                           this.handleCompleteTask(item);
                         }}
                       />
-                      <h1>{item[0]}hello</h1>
+                      <h1>{item[0]}</h1>
                       <button
                         onClick={() => {
                           this.handleDelete1(item);
