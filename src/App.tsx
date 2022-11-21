@@ -1,4 +1,4 @@
-import { ChangeEvent, Component, MouseEvent, ReactNode } from "react";
+import { ChangeEvent, Component, ReactNode } from "react";
 // import AddTodo from "./AddTodo";
 import { ImCross } from "react-icons/im";
 import { GrFormAdd } from "react-icons/gr";
@@ -9,7 +9,9 @@ type AppState = {
   show: boolean;
   task: string;
   id: number;
-  tasksArray: [string, boolean, number][];
+  // tasksArray: [string, boolean, number][];
+  inCompletedTask: [string, boolean, number][];
+  completedTask: [string, boolean, number][];
 };
 class App extends Component<AppProps, AppState> {
   constructor(props: AppProps) {
@@ -18,14 +20,17 @@ class App extends Component<AppProps, AppState> {
       show: false,
       task: "",
       id: 0,
-      tasksArray: [],
+      // tasksArray: [],
+      inCompletedTask: [],
+      completedTask: [],
     };
 
     this.handleInput = this.handleInput.bind(this);
     this.handleSaveButton = this.handleSaveButton.bind(this);
     this.handleCompleteTask = this.handleCompleteTask.bind(this);
     this.handleIncompleteTask = this.handleIncompleteTask.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
+    this.handleDelete1 = this.handleDelete1.bind(this);
+    this.handleDelete2 = this.handleDelete2.bind(this);
   }
 
   handleInput(e: ChangeEvent<HTMLInputElement>) {
@@ -42,41 +47,44 @@ class App extends Component<AppProps, AppState> {
     } else {
       this.setState({
         id: this.state.id + 1,
-        tasksArray: [
-          ...this.state.tasksArray,
+        inCompletedTask: [
+          ...this.state.inCompletedTask,
           [this.state.task, false, this.state.id],
         ],
         task: "",
       });
     }
   }
-  handleCompleteTask(e: ChangeEvent<HTMLInputElement>) {
-    const taskId = +e.target.value;
-    const task = e.target.name;
-    this.state.tasksArray[taskId] = [task, true, taskId];
-    this.setState({ tasksArray: [...this.state.tasksArray] });
+  handleCompleteTask(e: [string, boolean, number]) {
+    const newIncompleted = this.state.inCompletedTask.filter(
+      (item) => item != e
+    );
+    this.setState({
+      inCompletedTask: newIncompleted,
+      completedTask: [...this.state.completedTask, e],
+    });
   }
-  handleIncompleteTask(e: ChangeEvent<HTMLInputElement>) {
-    const taskId = +e.target.value;
-    const task = e.target.name;
-    this.state.tasksArray[taskId] = [task, false, taskId];
-    this.setState({ tasksArray: [...this.state.tasksArray] });
+  handleIncompleteTask(e: [string, boolean, number]) {
+    const newCompleted = this.state.completedTask.filter((item) => item != e);
+    this.setState({
+      completedTask: newCompleted,
+      inCompletedTask: [...this.state.inCompletedTask, e],
+    });
   }
-  handleDelete(task: any) {
-    const UpdateValue = this.state.tasksArray.filter((item) => {
+  handleDelete1(task: any) {
+    const UpdateValue = this.state.inCompletedTask.filter((item) => {
       return item !== task;
     });
-    this.setState({ tasksArray: [...UpdateValue] });
+    this.setState({ inCompletedTask: [...UpdateValue] });
+  }
+  handleDelete2(task: any) {
+    const UpdateValue = this.state.completedTask.filter((item) => {
+      return item !== task;
+    });
+    this.setState({ completedTask: [...UpdateValue] });
   }
 
   render(): ReactNode {
-    const incompleteTaks = this.state.tasksArray.filter((item) => {
-      return item[1] === false;
-    });
-    const completeTaks = this.state.tasksArray.filter((item) => {
-      return item[1] === true;
-    });
-
     return (
       <div className="">
         <div className="px-6 py-4 border-b border-gray-400">
@@ -88,20 +96,20 @@ class App extends Component<AppProps, AppState> {
             <div className="space-y-4 my-4">
               <h1 className="text-xl font-semibold ">Things to do </h1>
 
-              {incompleteTaks.length ? (
-                incompleteTaks.map((item, index) => {
+              {this.state.inCompletedTask.length ? (
+                this.state.inCompletedTask.map((item) => {
                   return (
                     <div key={item[2]} className="flex gap-2 items-center">
                       <input
                         type="checkbox"
-                        onChange={this.handleCompleteTask}
-                        value={item[2]}
-                        name={item[0]}
+                        onChange={() => {
+                          this.handleCompleteTask(item);
+                        }}
                       />
-                      <h1>{item[0]}</h1>
+                      <h1>{item[0]}hello</h1>
                       <button
                         onClick={() => {
-                          this.handleDelete(item);
+                          this.handleDelete1(item);
                         }}
                       >
                         {" "}
@@ -164,21 +172,21 @@ class App extends Component<AppProps, AppState> {
           )}
 
           {/* --------------------------completd task ------------------------ */}
-          {completeTaks.length ? (
-            completeTaks.map((item, index) => {
+          {this.state.completedTask.length ? (
+            this.state.completedTask.map((item, index) => {
               return (
                 <div key={index} className="flex gap-2 items-center">
                   <input
                     type="checkbox"
-                    value={item[2]}
-                    name={item[0]}
                     checked
-                    onChange={this.handleIncompleteTask}
+                    onChange={() => {
+                      this.handleIncompleteTask(item);
+                    }}
                   />
                   <h1>{item[0]}</h1>
                   <button
                     onClick={() => {
-                      this.handleDelete(item);
+                      this.handleDelete2(item);
                     }}
                   >
                     {" "}
